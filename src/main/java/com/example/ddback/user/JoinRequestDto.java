@@ -23,6 +23,7 @@ public class JoinRequestDto {
     //"partnerLocation": String array // 상대방 위치, 3개 | partnerLocation1[location1, location2]
 
     private String userId;
+    private String nickname;
     private String password;
     private String name;
     private Integer age;
@@ -32,13 +33,4 @@ public class JoinRequestDto {
     private ArrayList<String> hobby;
     private ArrayList<String> location;
     private ArrayList<String[]> partnerLocation;
-
-    public boolean isEmpty() {
-        if (this.userId == null || this.password == null || this.name == null || this.age == null ||
-                this.gender == null || this.partnerGender == null || this.veganState == null || this.hobby == null ||
-                this.location == null || this.partnerLocation == null) {
-            return true;
-        }
-        return false;
-    }
 }
