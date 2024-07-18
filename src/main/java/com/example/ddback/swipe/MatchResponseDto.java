@@ -12,5 +12,6 @@ import lombok.Setter;
 public class MatchResponseDto {
     private String userId;
     private String nickname;
+    private String imageLink;
     private String matchedTime;
 }

@@ -1,7 +1,7 @@
 package com.example.ddback.user;
 
-import com.example.ddback.StringArrayListConverter;
-import com.example.ddback.StringListConverter;
+import com.example.ddback.converter.StringArrayListConverter;
+import com.example.ddback.converter.StringListConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity

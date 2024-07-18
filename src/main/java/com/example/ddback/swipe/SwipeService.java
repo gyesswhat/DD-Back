@@ -123,7 +123,8 @@ public class SwipeService {
                 responses.add(new MatchResponseDto(
                         partner.getUserId(),
                         partner.getNickname(),
-                        partner.getImageLink()
+                        partner.getImageLink(),
+                        match.getMatchedTime()
                 ));
             }
             else {
@@ -131,7 +132,8 @@ public class SwipeService {
                 responses.add(new MatchResponseDto(
                         partner.getUserId(),
                         partner.getNickname(),
-                        partner.getImageLink()
+                        partner.getImageLink(),
+                        match.getMatchedTime()
                 ));
             }
         }
