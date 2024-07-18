@@ -1,5 +1,6 @@
 package com.example.ddback.user;
 
+import com.example.ddback.StringArrayListConverter;
 import com.example.ddback.StringListConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -39,7 +40,7 @@ public class User {
     private List<String> hobby;
     @Convert(converter = StringListConverter.class)
     private List<String> location;
-    @Convert(converter = StringListConverter.class)
+    @Convert(converter = StringArrayListConverter.class)
     private List<String[]> partnerLocation;
     @Column
     private String imageLink;
