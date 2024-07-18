@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,9 +17,9 @@ public class SwipePostResponseDto {
     //	{
     //		"partnerId": String,
     //		"nickname": String,
-    //		"name": String,
     //		"age": String,
-    //		"gender": String,
+    //		"veganState": Integer,
+    //		"hobby": String array,
     //		"imageLink": String,
     //		"location2": String
     //	}
@@ -25,7 +28,8 @@ public class SwipePostResponseDto {
     private String partnerId;
     private String nickname;
     private Integer age;
-    private String gender;
+    private Integer veganState;
+    private List<String> hobby;
     private String imageLink;
     private String location2;
 }

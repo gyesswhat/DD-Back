@@ -80,7 +80,8 @@ public class SwipeService {
                     matchingUser.getUserId(),
                     matchingUser.getNickname(),
                     matchingUser.getAge(),
-                    matchingUser.getGender(),
+                    matchingUser.getVeganState(),
+                    matchingUser.getHobby(),
                     matchingUser.getImageLink(),
                     matchingUser.getLocation().get(1)
             ));
