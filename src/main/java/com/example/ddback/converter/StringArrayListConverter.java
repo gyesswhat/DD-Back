@@ -1,4 +1,4 @@
-package com.example.ddback;
+package com.example.ddback.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
