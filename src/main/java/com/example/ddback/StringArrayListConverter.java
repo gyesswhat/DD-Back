@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.util.List;
 
 @Converter
-public class StringListConverter implements AttributeConverter<List<String>, String> {
+public class StringArrayListConverter implements AttributeConverter<List<String[]>, String> {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(List<String> dataList) {
+    public String convertToDatabaseColumn(List<String[]> dataList) {
         try {
             return mapper.writeValueAsString(dataList);
         } catch (JsonProcessingException e) {
@@ -24,9 +24,9 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
     }
 
     @Override
-    public List<String> convertToEntityAttribute(String data) {
+    public List<String[]> convertToEntityAttribute(String data) {
         try {
-            return mapper.readValue(data, new TypeReference<List<String>>() {});
+            return mapper.readValue(data, new TypeReference<List<String[]>>() {});
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

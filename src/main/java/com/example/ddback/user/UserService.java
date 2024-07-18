@@ -16,7 +16,7 @@ public class UserService {
 
     public User login(LoginRequestDto loginRequestDto) {
         // 1. 타겟 찾기
-        User target = userRepository.findByUserId(loginRequestDto.getUserId());
+        User target = userRepository.findById(loginRequestDto.getUserId()).orElse(null);
         if (target==null) return null;
 
         // 2. 데이터 검증
