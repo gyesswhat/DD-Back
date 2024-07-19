@@ -4,6 +4,7 @@ import com.example.ddback.user.User;
 import com.example.ddback.user.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
+@Slf4j
 public class SwipeService {
     @Autowired
     private UserRepository userRepository;
@@ -23,44 +25,59 @@ public class SwipeService {
     private MatchedUsersRepository matchedUsersRepository;
 
     public ArrayList<SwipePostResponseDto> swipe(String userId) {
-        // 1. 현재 사용자 정보 가져오기
+        log.info("Starting swipe method for userId: {}", userId);
+
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        log.info("Current user: {}", currentUser);
 
-        // 2. 현재 사용자의 관심 위치 리스트 가져오기
         List<String> currentUserLocations = currentUser.getLocation();
+        if (currentUserLocations.isEmpty()) {
+            log.warn("Current user's location list is empty");
+            throw new RuntimeException("Current user's location list is empty");
+        }
 
-        // 3. 현재 사용자의 상대방 위치 리스트 가져오기
         List<String[]> currentUserPartnerLocations = currentUser.getPartnerLocation();
-
-        // 4. 매칭된 사용자들을 담을 리스트 생성
-        List<User> matchingUsers = new ArrayList<>();
-
+        if (currentUserPartnerLocations.isEmpty()) {
+            log.warn("Current user's partner location list is empty");
+            throw new RuntimeException("Current user's partner location list is empty");
+        }
 
         List<User> users = userRepository.findAll();
+        log.info("Total users found: {}", users.size());
 
+        List<User> matchingUsers = new ArrayList<>();
         for (User user : users) {
+            log.debug("Checking user: {}", user.getUserId());
+
+            if (!currentUser.getPartnerGender().equals("상관없음") && !currentUser.getPartnerGender().equals(user.getGender())) {
+                continue;
+            }
+
             List<String[]> userPartnerLocations = user.getPartnerLocation();
             List<String> userLocations = user.getLocation();
 
-            boolean shouldAddUser = false;
+            if (userPartnerLocations.isEmpty() || userLocations.isEmpty()) {
+                log.debug("User {} has empty partner locations or locations", user.getUserId());
+                continue;
+            }
 
-            // Check all conditions in one loop
+            boolean shouldAddUser = false;
             for (String[] currentUserPartnerLocation : currentUserPartnerLocations) {
                 for (String[] userPartnerLocation : userPartnerLocations) {
-                    if (currentUserPartnerLocation[0].equals(userPartnerLocation[0])
-                            && currentUserPartnerLocation[1].equals(userPartnerLocation[1])) {
+                    if (currentUserPartnerLocation[0].equals(userPartnerLocation[0]) &&
+                            currentUserPartnerLocation[1].equals(userPartnerLocation[1])) {
                         shouldAddUser = true;
                     }
                 }
                 if (userPartnerLocations.stream()
-                        .anyMatch(partnerLocation -> partnerLocation[0].equals(currentUserLocations.get(0))
-                                && partnerLocation[1].equals(currentUserLocations.get(1)))) {
+                        .anyMatch(partnerLocation -> partnerLocation[0].equals(currentUserLocations.get(0)) &&
+                                partnerLocation[1].equals(currentUserLocations.get(1)))) {
                     shouldAddUser = true;
                 }
                 if (currentUserPartnerLocations.stream()
-                        .anyMatch(partnerLocation -> partnerLocation[0].equals(userLocations.get(0))
-                                && partnerLocation[1].equals(userLocations.get(1)))) {
+                        .anyMatch(partnerLocation -> partnerLocation[0].equals(userLocations.get(0)) &&
+                                partnerLocation[1].equals(userLocations.get(1)))) {
                     shouldAddUser = true;
                 }
             }
@@ -69,26 +86,27 @@ public class SwipeService {
                 matchingUsers.add(user);
             }
         }
-        // 7. 중복 제거 및 현재 사용자 제외
+
+        log.info("Matching users found: {}", matchingUsers.size());
         matchingUsers.removeIf(user -> user.getUserId().equals(userId));
 
-        // 8. 최종적으로 반환할 SwipePostResponseDto 리스트 생성
         ArrayList<SwipePostResponseDto> responses = new ArrayList<>();
-
         for (User matchingUser : matchingUsers) {
-            responses.add(new SwipePostResponseDto(
-                    matchingUser.getUserId(),
-                    matchingUser.getNickname(),
-                    matchingUser.getAge(),
-                    matchingUser.getVeganState(),
-                    matchingUser.getHobby(),
-                    matchingUser.getImageLink(),
-                    matchingUser.getLocation().get(1)
-            ));
+            if (matchingUser.getLocation().size() > 1) {
+                responses.add(new SwipePostResponseDto(
+                        matchingUser.getUserId(),
+                        matchingUser.getNickname(),
+                        matchingUser.getAge(),
+                        matchingUser.getVeganState(),
+                        matchingUser.getHobby(),
+                        matchingUser.getImageLink(),
+                        matchingUser.getLocation().get(1)
+                ));
+            }
         }
 
-        return responses;
-    }
+        log.info("Returning {} responses", responses.size());
+        return responses;    }
 
     public Boolean likematch(SwipeLikeRequestDto swipeLikeRequestDto) {
         // 1. Likematch 저장
